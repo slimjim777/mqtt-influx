@@ -6,7 +6,7 @@ RUN GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -a -o /go/bin/mqtt-influx -
 # Copy the built applications to the docker image
 FROM alpine:latest
 RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
-COPY --from=builder1 /go/bin/mqtt-influx mqtt-influx
+COPY --from=builder1 /go/bin/mqtt-influx /bin/mqtt-influx
 
 ARG INFLUXDB_URL="http://localhost:8086"
 ARG INFLUXDB_USER=""
@@ -35,6 +35,5 @@ ENV MQTT_TLS="${MQTT_TLS}"
 ENV MQTT_TLS_CA="${MQTT_TLS_CA}"
 ENV MQTT_TLS_CERT="${MQTT_TLS_CERT}"
 ENV MQTT_TLS_KEY="${MQTT_TLS_KEY}"
-
 
 ENTRYPOINT mqtt-influx
