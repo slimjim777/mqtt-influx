@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mqtt-influx
+spec:
+  selector:
+    matchLabels:
+      app: mqtt-influx
+      track: stable
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mqtt-influx
+        track: stable
+    spec:
+      containers:
+        - name: mqtt-influx
+          image: sonicblue/mqtt-influx
+          env:
+            - name: INFLUXDB_URL
+              value: "http://influx-influxdb.default:8086"
+            - name: INFLUXDB_USER
+              value: ""
+            - name: INFLUXDB_PASSWORD
+              value: ""
+            - name: INFLUXDB_DATABASE
+              value: "metrics"
+            - name: MQTT_HOST
+              value: "mqtt"
+            - name: MQTT_PORT
+              value: "1883"
+            - name: MQTT_USER
+              value: ""
+            - name: MQTT_PASSWORD
+              value: ""
+            - name: MQTT_TOPICS
+              value: "metrics,metrics/*"
+            - name: MQTT_TLS
+              value: "false"
+            - name: MQTT_TLS_CA
+              value: ""
+            - name: MQTT_TLS_CERT
+              value: ""
+            - name: MQTT_TLS_KEY
+              value: ""
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mqtt-influx
+spec:
+  selector:
+    app: mqtt-influx
+

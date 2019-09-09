@@ -1,12 +1,11 @@
 FROM golang:1.12 as builder1
 COPY . ./src/github.com/slimjim777/mqtt-influx
 WORKDIR /go/src/github.com/slimjim777/mqtt-influx
-RUN GO111MODULES=on CGO_ENABLED=0 GOOS=linux go build -a -o /go/bin/mqtt-influx -ldflags='-extldflags "-static"' cmd/mqtt-influx/main.go
+RUN GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -a -o /go/bin/mqtt-influx -ldflags='-extldflags "-static"' cmd/mqtt-influx/main.go
 
 # Copy the built applications to the docker image
-FROM scratch
-RUN apt-get update
-RUN apt-get install -y ca-certificates
+FROM alpine:latest
+RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
 COPY --from=builder1 /go/bin/mqtt-influx mqtt-influx
 
 ARG INFLUXDB_URL="http://localhost:8086"
